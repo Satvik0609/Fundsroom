@@ -1,0 +1,47 @@
+{
+  "name": "mini-erp-crm-backend",
+  "version": "1.0.0",
+  "description": "Mini ERP + CRM Operations Portal - Backend API",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "node node_modules/tsx/dist/cli.mjs watch src/server.ts",
+    "build": "node node_modules/typescript/bin/tsc",
+    "start": "node dist/server.js",
+    "db:generate": "node node_modules/prisma/build/index.js generate",
+    "db:migrate": "node node_modules/prisma/build/index.js migrate dev",
+    "db:migrate:deploy": "node node_modules/prisma/build/index.js migrate deploy",
+    "db:seed": "node node_modules/tsx/dist/cli.mjs prisma/seed.ts",
+    "db:reset": "node node_modules/prisma/build/index.js migrate reset --force",
+    "test": "node node_modules/jest/bin/jest.js --runInBand --forceExit",
+    "test:watch": "jest --watch --runInBand"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "keywords": ["erp", "crm", "express", "prisma"],
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^6.3.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.5",
+    "@types/supertest": "^6.0.2",
+    "jest": "^29.7.0",
+    "prisma": "^6.3.1",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
