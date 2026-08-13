@@ -12,12 +12,25 @@ export const paginationSchema = z.object({
   search: z.string().optional(),
 });
 
+const optionalEmail = z.union([
+  z.literal(''),
+  z.string().email('Invalid email'),
+]).optional();
+
+const optionalGst = z.union([
+  z.literal(''),
+  z.string().regex(
+    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+    'Invalid GST number'
+  ),
+]).optional();
+
 export const createCustomerSchema = z.object({
   customerName: z.string().min(1, 'Customer name is required').max(200),
   mobileNumber: z.string().regex(/^[6-9]\d{9}$/, 'Invalid mobile number (10 digits starting with 6-9)'),
-  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  email: optionalEmail,
   businessName: z.string().max(200).optional(),
-  gstNumber: z.string().regex(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, 'Invalid GST number').optional().or(z.literal('')),
+  gstNumber: optionalGst,
   customerType: z.nativeEnum(CustomerType),
   address: z.string().max(500).optional(),
   status: z.nativeEnum(CustomerStatus).default(CustomerStatus.LEAD),

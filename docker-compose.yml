@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mini-erp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mini_erp_crm
+    ports:
+      - '5432:5432'
+    volumes:
+      - mini_erp_pg_data:/var/lib/postgresql/data
+
+volumes:
+  mini_erp_pg_data:

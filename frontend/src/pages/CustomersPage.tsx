@@ -50,7 +50,19 @@ export default function CustomersPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = { ...form, followUpDate: form.followUpDate || undefined };
+      const payload: Record<string, unknown> = {
+        customerName: form.customerName.trim(),
+        mobileNumber: form.mobileNumber.trim(),
+        customerType: form.customerType,
+        status: form.status,
+      };
+      if (form.email.trim()) payload.email = form.email.trim();
+      if (form.businessName.trim()) payload.businessName = form.businessName.trim();
+      if (form.gstNumber.trim()) payload.gstNumber = form.gstNumber.trim().toUpperCase();
+      if (form.address.trim()) payload.address = form.address.trim();
+      if (form.notes.trim()) payload.notes = form.notes.trim();
+      if (form.followUpDate) payload.followUpDate = form.followUpDate;
+
       if (editId) {
         await api.updateCustomer(editId, payload);
         setAlert({ type: 'success', message: 'Customer updated' });
@@ -61,8 +73,16 @@ export default function CustomersPage() {
       setModalOpen(false);
       load();
     } catch (err: unknown) {
-      const apiErr = err as { message?: string };
-      setAlert({ type: 'error', message: apiErr.message || 'Failed to save' });
+      const apiErr = err as { message?: string; details?: Record<string, string[] | string> };
+      let msg = apiErr.message || 'Failed to save';
+      if (apiErr.details && typeof apiErr.details === 'object') {
+        const fieldErrors = Object.entries(apiErr.details)
+          .flatMap(([field, errors]) =>
+            (Array.isArray(errors) ? errors : [String(errors)]).map((e) => `${field}: ${e}`)
+          );
+        if (fieldErrors.length > 0) msg = fieldErrors.join('; ');
+      }
+      setAlert({ type: 'error', message: msg });
     }
   };
 
@@ -117,7 +137,7 @@ export default function CustomersPage() {
         <form onSubmit={handleSubmit}>
           <div className="form-row">
             <div className="form-group"><label>Customer Name *</label><input required value={form.customerName} onChange={(e) => setForm({ ...form, customerName: e.target.value })} /></div>
-            <div className="form-group"><label>Mobile *</label><input required value={form.mobileNumber} onChange={(e) => setForm({ ...form, mobileNumber: e.target.value })} /></div>
+            <div className="form-group"><label>Mobile *</label><input required pattern="[6-9][0-9]{9}" title="10-digit mobile starting with 6-9" value={form.mobileNumber} onChange={(e) => setForm({ ...form, mobileNumber: e.target.value.replace(/\D/g, '').slice(0, 10) })} /></div>
           </div>
           <div className="form-row">
             <div className="form-group"><label>Email</label><input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
